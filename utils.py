@@ -1,14 +1,36 @@
-import pandas as pd
+from openpyxl import *
+import os
+from  datetime import  date
+from cal import Months
 
-# with pd.ExcelFile('timesheet.xls') as xls:
-#     df1 = pd.read_excel(xls, 'Sheet1')
-#     df2 = pd.read_excel(xls, 'Sheet2')
 
-table = {
-    'project': ["week1", "week2", "week3", "week4"],
-    'description of work': [['desc1', 'desc1.1', 'desc1.2', 'desc1.3'], 'desc2', 'desc3', 'desc4'],
-    'office use': ['use1', 'use2', 'use3', 'use4'],
-}
+def locate_template(directory):
+    program_dir = directory
+    template_dir = 'templates'
+    if not os.path.isdir(template_dir):
+            os.makedirs(template_dir)
+    template_path = program_dir + '/templates/timesheet_template.xlsx'
+    return template_path    
 
-timesheet = pd.DataFrame(table)
-print(timesheet)
+
+def get_month():
+    today = date.today()
+    month_num = today.month
+    month_name = Months[str(month_num)]
+    return month_name
+
+
+def save():
+    directory_to = 'timesheets'
+    if not os.path.isdir(directory_to):
+        os.makedirs(directory_to)
+    file_name = str(get_month()) + '.xlsx'
+    wb.save(os.path.join(directory_to, file_name))
+
+    
+if __name__ == "__main__":
+    program_dir = 'C:/Users/Bernard/Dropbox/Personal/python/auto_timesheet'
+    template_path = locate_template(program_dir)
+    wb = load_workbook(template_path)
+    save()
+    pass
