@@ -1,16 +1,30 @@
 from openpyxl import *
-import os
+import os, os.path
 from  datetime import  date
 from cal import Months
 
 
+## there should always be a template file in the templates directory ##
 def locate_template(directory):
-    program_dir = directory
-    template_dir = 'templates'
-    if not os.path.isdir(template_dir):
-            os.makedirs(template_dir)
+    program_dir = directory    
     template_path = program_dir + '/templates/timesheet_template.xlsx'
     return template_path    
+
+
+def locate_file(directory):
+    program_dir = directory
+    file_name = str(get_year()) + '_timeheets.xlsx'
+    file_path = program_dir + '/timesheets/' + file_name
+    return file_path
+
+
+def check_timebook(program_dir):
+    file_name = str(get_year()) + '_timeheets.xlsx'
+    tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name )
+    if tb_exists == True:
+        print('file already exists')
+    else:
+        create_file()
 
 
 def get_month():
@@ -20,17 +34,36 @@ def get_month():
     return month_name
 
 
-def save():
+def get_year():
+    today = date.today()
+    year_num = today.year    
+    return year_num
+
+
+def create_file():
     directory_to = 'timesheets'
     if not os.path.isdir(directory_to):
         os.makedirs(directory_to)
-    file_name = str(get_month()) + '.xlsx'
-    wb.save(os.path.join(directory_to, file_name))
+    file_name = str(get_year()) + '_timeheets.xlsx'
+    temp_wb.save(os.path.join(directory_to, file_name))   
 
-    
-if __name__ == "__main__":
+        
+# def check_timeheet():
+#     if str(get_month()) in wb.sheetnames:
+#         pass
+#     else:
+#         wb.add_sheet(book[str(get(month))])        
+#         pass
+   
+
+if __name__ == "__main__": 
+    ## user required to insert path to program ##
     program_dir = 'C:/Users/Bernard/Dropbox/Personal/python/auto_timesheet'
-    template_path = locate_template(program_dir)
-    wb = load_workbook(template_path)
-    save()
-    pass
+  
+    ## current year workbook object ##
+    wb = load_workbook(str(locate_file(program_dir)))
+
+    ## checks if current years timebook exists, if not creates new ##
+    check_timebook(program_dir)  
+         
+    
