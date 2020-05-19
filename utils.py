@@ -11,20 +11,11 @@ def locate_template(directory):
     return template_path    
 
 
-def locate_file(directory):
+def locate_timebook(directory):
     program_dir = directory
     file_name = str(get_year()) + '_timeheets.xlsx'
     file_path = program_dir + '/timesheets/' + file_name
     return file_path
-
-
-def check_timebook(program_dir):
-    file_name = str(get_year()) + '_timeheets.xlsx'
-    tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name )
-    if tb_exists == True:
-        print('file already exists')
-    else:
-        create_file()
 
 
 def get_month():
@@ -40,12 +31,24 @@ def get_year():
     return year_num
 
 
-def create_file():
+def create_timebook(program_dir):
     directory_to = 'timesheets'
+    file_name = str(get_year()) + '_timeheets.xlsx'
     if not os.path.isdir(directory_to):
         os.makedirs(directory_to)
-    file_name = str(get_year()) + '_timeheets.xlsx'
-    temp_wb.save(os.path.join(directory_to, file_name))   
+    tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name )
+    if tb_exists == True:
+        ## Prompt if file already exists , override? ##
+        print('Timebook for ' + str(get_year()) + ' already exists')
+        prompt= input('Override? Y/N :')
+        if prompt == 'Y' or 'y':
+            temp_wb.save(os.path.join(directory_to, file_name))
+            print('Timebook for ' + str(get_year()) + ' created')
+        else:
+            pass     
+    else:
+        temp_wb.save(os.path.join(directory_to, file_name)) 
+        print('Timebook for ' + str(get_year()) + 'created')  
 
         
 # def check_timeheet():
@@ -54,16 +57,19 @@ def create_file():
 #     else:
 #         wb.add_sheet(book[str(get(month))])        
 #         pass
+
    
 
 if __name__ == "__main__": 
     ## user required to insert path to program ##
     program_dir = 'C:/Users/Bernard/Dropbox/Personal/python/auto_timesheet'
-  
+    
+    ## template workbook object ##
+    temp_wb = load_workbook(str(locate_template(program_dir)))
     ## current year workbook object ##
-    wb = load_workbook(str(locate_file(program_dir)))
+    wb = load_workbook(str(locate_timebook(program_dir)))
 
     ## checks if current years timebook exists, if not creates new ##
-    check_timebook(program_dir)  
+    create_timebook(program_dir)  
          
     
