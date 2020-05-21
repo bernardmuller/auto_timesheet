@@ -3,7 +3,7 @@ import os, os.path
 from  datetime import  date
 from cal import Months
 
-class Automator:
+class TimebookSetup:
 
     def Save(self):
         directory_to = 'timesheets'
@@ -25,6 +25,11 @@ class Automator:
         file_path = program_dir + '/timesheets/' + file_name
         return file_path
 
+    def get_day(self):
+        today = date.today()
+        day_num = today.day
+        #month_name = Months[str(month_num)]
+        return str(day_num)
 
     def get_month(self):
         today = date.today()
@@ -66,24 +71,26 @@ class Automator:
         else:     
             print('Sheet ' + self.get_month() + ' added in workbook')   
             wb.create_sheet(self.get_month())
-            self.save()  
+            self.Save()
 
-class Cloner:
+
+class Cloner:       
+
     def rename_Sheet1(self):
         sheet = wb['Sheet1']
         sheet.title = 'Template' 
 
 
-    def copy_frm_temp(self):
+    def copy_from_template(self):
         temp_sheet = wb['Template']
-        active_sheet = wb[Automator.get_month()]
+        active_sheet = wb[TimebookSetup.get_month()]
         for i in range(1, 100):
             for j in range(1, 26):
                 active_sheet.cell(row=i,column=j).value = temp_sheet.cell(row=i,column=j).value
 
     def Clone(self):
         self.rename_Sheet1()
-        self.copy_frm_temp()
+        self.copy_from_template()
         print('Template Cloned')
 
 
@@ -93,20 +100,39 @@ if __name__ == "__main__":
     ## user required to insert path to program ##
     program_dir = 'C:/Users/Bernard/Dropbox/Personal/python/auto_timesheet'
 
-    A = Automator()
-    B = Cloner()
+    Setup = TimebookSetup()
+    Cloner = Cloner()
+    
     ## template workbook object ##
-    temp_wb = load_workbook(str(A.locate_template(program_dir)))
+    temp_wb = load_workbook(str(Setup.locate_template(program_dir)))
+
     ## current year workbook object ##
-    wb = load_workbook(str(A.locate_timebook(program_dir)))
-
-    ## checks if current years timebook exists, if not creates new ##
-    #create_timebook(program_dir)  
-    #create_timeheet()    
+    wb = load_workbook(str(Setup.locate_timebook(program_dir)))
     
-    #B.Clone()
+    ## active sheet set as current month ##
+    active_sheet = wb[TimebookSetup.get_month()]
 
-    active_sheet = wb[A.get_month()]
-    active_sheet.cell(row=2,column=10). value = 'It Worked!!'
+
+### add to class ###
+    ## following appends work descriptions to excel file
+    weeks = 4
+    days = 5 
     
-    A.Save()
+    active_sheet = wb[TimebookSetup.get_month()]    
+    
+    week = 1
+    for w in range(weeks):
+        temp = []
+        temp.clear()
+        temp.append('week' + str(week))
+        active_sheet.append(temp)
+        week += 1
+        for i in range(days):
+            desc_value = input('Description: ')
+            day_list = [(str(TimebookSetup.get_day()), desc_value, '*')] 
+            for d in day_list:                           
+                active_sheet.append(d)   
+
+    
+    
+    Setup.Save()
