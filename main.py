@@ -4,6 +4,7 @@ from datetime import date
 import  datetime
 from cal import Months
 import time
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 
 
 class Clock:   
@@ -160,7 +161,7 @@ if __name__ == "__main__":
     program_dir = 'C:/Users/Bernard/Dropbox/Personal/python/auto_timesheet'
 
 
-#-------Class_Instances------#
+#--------Class_Objects-------#
     Clock = Clock() 
     TimebookSetup = TimebookSetup()
     TimesheetSetup = TimesheetSetup()
@@ -179,6 +180,11 @@ if __name__ == "__main__":
     active_sheet = wb[Clock.get_month()]
     Editor.month_Entries() 
 
+    for i in range(7, active_sheet.max_row):
+            for j in range(1, 4):
+                active_sheet.cell(row=i,column=j).border = Border(left=Side(border_style='Thick Outside Border', color='FF000000')
+                
 
 #-----------Save-------------#    
     TimebookSetup.Save()
+
