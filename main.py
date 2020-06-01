@@ -1,10 +1,13 @@
-from openpyxl import *
-import os, os.path
+import datetime
+import os
+import os.path
 from datetime import date
-import  datetime
+
+from openpyxl import *
+from openpyxl.styles import *
+
 from cal import Months
-import time
-from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
+
 
 
 class Clock:   
@@ -95,7 +98,9 @@ class TimesheetSetup:
             print('Sheet ' + Clock.get_month() + ' added in workbook')   
             wb.create_sheet(Clock.get_month())
             self.copy_from_template() 
-            # TimebookSetup.Save()           
+            # TimebookSetup.Save()
+        #self.EnterCredentials()
+
 
 
     def rename_Sheet1(self):
@@ -108,7 +113,25 @@ class TimesheetSetup:
         active_sheet = wb[Clock.get_month()]
         for i in range(1, 7):
             for j in range(1, 4):
-                active_sheet.cell(row=i,column=j).value = temp_sheet.cell(row=i,column=j).value
+                active_sheet.cell(row=i, column=j).value = temp_sheet.cell(row=i, column=j).value
+
+
+    def EnterCredentials(self):
+        active_sheet = wb[Clock.get_month()]
+        username = active_sheet['B4'].value
+        current_month =  str(Clock.get_month())
+        if active_sheet['B3'].value == current_month:
+            pass
+        else:
+            active_sheet['A7'].value = current_month
+        if username.isalpha:
+            pass
+        else:
+            new_user = input('Please enter your name: ')
+            username = new_user
+            print('username saved')
+
+
 
     
 
@@ -134,7 +157,7 @@ class Editor:
         if date.today().weekday() == 0:
             if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
                 print('Daily Entry Satisfied')
-            elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'project': 
+            elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
                 active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week 
                 self.day_Entry()                    
             else:
@@ -146,11 +169,63 @@ class Editor:
         elif not date.today().weekday() == 0 or 5 or 6:
             if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
                 print('Daily Entry Satisfied')
-            elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'project': 
+            elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
                 active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week
                 self.day_Entry()               
             else:
-                self.day_Entry()        
+                self.day_Entry()
+
+
+class Styler:
+
+    def Column_sizes(self):
+        active_sheet = wb[Clock.get_month()]
+        active_sheet.column_dimensions['A'].width = 17
+        active_sheet.column_dimensions['B'].width = 48
+        active_sheet.column_dimensions['C'].width = 17
+
+
+    def Borders(self):
+        active_sheet = wb[Clock.get_month()]
+        thin = Side(border_style="thin", color="000000")
+        double = Side(border_style="double", color="000000")
+
+        for i in range(1, 4):
+            active_sheet.cell(row=6,column=i).border = Border(top=thin, left=thin, right=thin, bottom=double)
+
+        for i in range(7, active_sheet.max_row+1):
+            for j in range(1, 4):
+                active_sheet.cell(row=i,column=j).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+
+    def Headers(self):
+        active_sheet = wb[Clock.get_month()]
+        medium_font = Font(name='Calibri', bold=True, size= 16)
+        center_align = Alignment(horizontal='center')
+        right_align = Alignment(horizontal='right')
+        large_font = Font(name='Calibri', bold=True, size= 18)
+
+
+        #---Timesheet---#
+        active_sheet['A1'].value = 'TIMESHEET'
+        active_sheet['A1'].font = large_font
+
+        active_sheet['B1'].value = 'CNR'
+        active_sheet['C1'].value = '.Architects'
+        active_sheet['B1'].font = Font(name='Bauhaus 93', size=16, bold=True)
+        active_sheet['C1'].font = Font(name= 'New Times Roman', size=16, bold=False)
+        active_sheet['B1'].alignment = Alignment(horizontal='right')
+
+
+        for i in range(1, 4):
+            active_sheet.cell(row=6, column=i).font = medium_font
+            active_sheet.cell(row=6, column=i).alignment = center_align
+
+
+    def style(self):
+        self.Column_sizes()
+        self.Borders()
+        self.Headers()
+
 
   
     
@@ -158,7 +233,7 @@ if __name__ == "__main__":
 
 #---------Directory----------#
     ## Add in Options box in GUI ##
-    program_dir = 'C:/Users/Bernard/Dropbox/Personal/python/auto_timesheet'
+    program_dir = 'C:/Users/Bernard/PycharmProjects/auto_timesheet'
 
 
 #--------Class_Objects-------#
@@ -166,7 +241,8 @@ if __name__ == "__main__":
     TimebookSetup = TimebookSetup()
     TimesheetSetup = TimesheetSetup()
     # GUI window 2 
-    Editor = Editor() 
+    Editor = Editor()
+    Style = Styler()
 
 
 #----------template----------#    
@@ -178,12 +254,14 @@ if __name__ == "__main__":
     wb = load_workbook(str(TimebookSetup.locate_timebook(program_dir)))    
     TimesheetSetup.Create()
     active_sheet = wb[Clock.get_month()]
-    Editor.month_Entries() 
+    Editor.month_Entries()
+    Style.style()
 
-    for i in range(7, active_sheet.max_row):
-            for j in range(1, 4):
-                active_sheet.cell(row=i,column=j).border = Border(left=Side(border_style='Thick Outside Border', color='FF000000')
-                
+
+    # for i in range(7, active_sheet.max_row):
+    #         for j in range(1, 4):
+    #             active_sheet.cell(row=i,column=j).border = Border(left=Side(border_style='Thick Outside Border', color='FF000000')
+    #
 
 #-----------Save-------------#    
     TimebookSetup.Save()
