@@ -9,6 +9,22 @@ from openpyxl.styles import *
 from cal import Months
 
 
+class ProgramSetup:
+
+    def Setup_Dir(self):
+        program_directory = open("directory.txt", "w")
+        saved_dir = ''
+        if 'C:/Users/' in program_directory:
+            print('Directory already created')
+            for dir in program_directory:
+                saved_dir.append(dir)
+        else:
+            prog_dir = input("Please enter program directory path: ")
+            program_directory.write(prog_dir)
+            saved_dir.append(prog_dir)
+        program_directory.close()
+        return saved_dir
+
 
 class Clock:   
 
@@ -99,8 +115,7 @@ class TimesheetSetup:
             wb.create_sheet(Clock.get_month())
             self.copy_from_template() 
             # TimebookSetup.Save()
-        #self.EnterCredentials()
-
+        self.EnterCredentials()
 
 
     def rename_Sheet1(self):
@@ -123,17 +138,15 @@ class TimesheetSetup:
         if active_sheet['B3'].value == current_month:
             pass
         else:
-            active_sheet['A7'].value = current_month
-        if username.isalpha:
-            pass
-        else:
+            active_sheet['B3'].value = current_month
+        if username == 'Name':
             new_user = input('Please enter your name: ')
             username = new_user
-            print('username saved')
+            print('Username saved.')
+        else:
+            pass
 
 
-
-    
 
 class Editor:
 
@@ -232,7 +245,8 @@ class Styler:
 if __name__ == "__main__":
 
 #---------Directory----------#
-    ## Add in Options box in GUI ##
+    # ProgramSetup = ProgramSetup()
+    # program_dir = ProgramSetup.Setup_Dir()
     program_dir = 'C:/Users/Bernard/PycharmProjects/auto_timesheet'
 
 
@@ -240,7 +254,6 @@ if __name__ == "__main__":
     Clock = Clock() 
     TimebookSetup = TimebookSetup()
     TimesheetSetup = TimesheetSetup()
-    # GUI window 2 
     Editor = Editor()
     Style = Styler()
 
@@ -257,11 +270,6 @@ if __name__ == "__main__":
     Editor.month_Entries()
     Style.style()
 
-
-    # for i in range(7, active_sheet.max_row):
-    #         for j in range(1, 4):
-    #             active_sheet.cell(row=i,column=j).border = Border(left=Side(border_style='Thick Outside Border', color='FF000000')
-    #
 
 #-----------Save-------------#    
     TimebookSetup.Save()
