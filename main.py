@@ -101,6 +101,7 @@ class TimebookSetup:
                 prompt2 = input('Are you sure? Y/N :')
                 if prompt2 in ['Y', 'y']:
                     temp_wb.save(os.path.join(directory_to, file_name))
+                    ProgramSetup.line(self)
                     print('Timebook for ' + Clock.get_year() + ' created')
                 else:
                     ProgramSetup.line(self)
@@ -108,8 +109,11 @@ class TimebookSetup:
             else:
                 pass
         else:
-            temp_wb.save(os.path.join(directory_to, file_name)) 
-            print('Timebook for ' + Clock.get_year() + ' created')      
+            temp_wb.save(os.path.join(directory_to, file_name))
+            ProgramSetup.line(self)
+            print('Timebook for ' + Clock.get_year() + ' created')
+
+
 
             
     
@@ -242,6 +246,8 @@ class Styler:
         active_sheet['B1'].font = Font(name='Bauhaus 93', size=16, bold=True)
         active_sheet['C1'].font = Font(name= 'New Times Roman', size=16, bold=False)
         active_sheet['B1'].alignment = Alignment(horizontal='right')
+
+        active_sheet['A'].alignment = Alignment(horizontal='center')
 
 
         for i in range(1, 4):
