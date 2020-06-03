@@ -180,6 +180,7 @@ class Editor:
         current_week = self.curr_week()
         if date.today().weekday() == 0:
             if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
+                ProgramSetup.line(self)
                 print('Daily Entry Satisfied')
                 ProgramSetup.line(self)
             elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
@@ -193,6 +194,7 @@ class Editor:
                     self.day_Entry()
         elif not date.today().weekday() == 0 or 5 or 6:
             if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
+                ProgramSetup.line(self)
                 print('Daily Entry Satisfied')
                 ProgramSetup.line(self)
             elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
@@ -286,5 +288,6 @@ if __name__ == "__main__":
 
 #-----------Save-------------#
     TimebookSetup.Save()
+    time.sleep(5)
 
 
