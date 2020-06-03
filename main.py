@@ -2,6 +2,8 @@ import datetime
 import os
 import os.path
 from datetime import date
+import time
+from dir import Setup_Dir
 
 from openpyxl import *
 from openpyxl.styles import *
@@ -11,23 +13,25 @@ from cal import Months
 
 class ProgramSetup:
 
-    def Setup_Dir(self):
-        program_directory = open("directory.txt", "w")
-        saved_dir = ''
-        if 'C:/Users/' in program_directory:
-            print('Directory already created')
-            for dir in program_directory:
-                saved_dir.append(dir)
-        else:
-            prog_dir = input("Please enter program directory path: ")
-            program_directory.write(prog_dir)
-            saved_dir.append(prog_dir)
-        program_directory.close()
-        return saved_dir
+    def __init__(self):
+        pass
+
+    def line(self):
+        time.sleep(0.5)
+        print('+------------------------------+')
+        time.sleep(0.5)
+
+    def exit(self):
+        time.sleep(0.5)
+        print()
+        print('+------------------------------+')
+        print('|       made by grizzly        |')
+        print('+------------------------------+')
+        time.sleep(0.5)
 
 
-class Clock:   
 
+class Clock:
 
     def get_day(self):
         today = date.today()
@@ -58,6 +62,7 @@ class Clock:
 
 class TimebookSetup:
 
+
     def Save(self):
         directory_to = 'timesheets'
         file_name = Clock.get_year() + '_timeheets.xlsx'
@@ -65,6 +70,8 @@ class TimebookSetup:
             os.makedirs(directory_to)
         wb.save(os.path.join(directory_to, file_name))
         print('File Saved')
+        ProgramSetup.exit(self)
+
 
     ## there should always be a template file in the templates directory ##
     def locate_template(self, directory):
@@ -89,12 +96,17 @@ class TimebookSetup:
         if tb_exists == True:
             ## Prompt if file already exists , override? ##
             print('Timebook for ' + Clock.get_year() + ' already exists')
-            prompt= input('Override? Y/N :')
+            prompt = input('Override? Y/N :')
             if prompt in ['Y', 'y']:
-                temp_wb.save(os.path.join(directory_to, file_name)) 
-                print('Timebook for ' + Clock.get_year() + ' created')
+                prompt2 = input('Are you sure? Y/N :')
+                if prompt2 in ['Y', 'y']:
+                    temp_wb.save(os.path.join(directory_to, file_name))
+                    print('Timebook for ' + Clock.get_year() + ' created')
+                else:
+                    ProgramSetup.line(self)
+                    pass
             else:
-                print()                    
+                pass
         else:
             temp_wb.save(os.path.join(directory_to, file_name)) 
             print('Timebook for ' + Clock.get_year() + ' created')      
@@ -111,11 +123,11 @@ class TimesheetSetup:
         if Clock.get_month() in wb.sheetnames:
             pass
         else:     
-            print('Sheet ' + Clock.get_month() + ' added in workbook')   
+            print('Sheet ' + Clock.get_month() + ' added in workbook')
+            ProgramSetup.line(self)
             wb.create_sheet(Clock.get_month())
-            self.copy_from_template() 
-            # TimebookSetup.Save()
-        self.EnterCredentials()
+            self.copy_from_template()
+            self.EnterCredentials()
 
 
     def rename_Sheet1(self):
@@ -130,19 +142,17 @@ class TimesheetSetup:
             for j in range(1, 4):
                 active_sheet.cell(row=i, column=j).value = temp_sheet.cell(row=i, column=j).value
 
-
     def EnterCredentials(self):
         active_sheet = wb[Clock.get_month()]
-        username = active_sheet['B4'].value
-        current_month =  str(Clock.get_month())
-        if active_sheet['B3'].value == current_month:
-            pass
-        else:
-            active_sheet['B3'].value = current_month
-        if username == 'Name':
+        current_month = str(Clock.get_month())
+        current_year = str(Clock.get_year())
+        if active_sheet['B3'].value == 'xxx':
+            active_sheet['B3'].value = current_month + ' ' + current_year
+        if active_sheet['B4'].value == 'xxx':
             new_user = input('Please enter your name: ')
-            username = new_user
+            active_sheet['B4'].value = new_user
             print('Username saved.')
+            ProgramSetup.line(self)
         else:
             pass
 
@@ -152,11 +162,12 @@ class Editor:
 
     def day_Entry(self):
 
-        desc_value = input('Description: ')
+        desc_value = input('Today\'s work description: ')
         day_list = [(str(Clock.get_day()), desc_value, '*')] 
         for d in day_list:                           
             active_sheet.append(d)
         print(f'Description for {Clock.get_day()} {Clock.get_month()} submitted.')
+        ProgramSetup.line(self)
 
 
     def curr_week(self):
@@ -170,6 +181,7 @@ class Editor:
         if date.today().weekday() == 0:
             if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
                 print('Daily Entry Satisfied')
+                ProgramSetup.line(self)
             elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
                 active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week 
                 self.day_Entry()                    
@@ -182,6 +194,7 @@ class Editor:
         elif not date.today().weekday() == 0 or 5 or 6:
             if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
                 print('Daily Entry Satisfied')
+                ProgramSetup.line(self)
             elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
                 active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week
                 self.day_Entry()               
@@ -244,11 +257,14 @@ class Styler:
     
 if __name__ == "__main__":
 
-#---------Directory----------#
-    # ProgramSetup = ProgramSetup()
-    # program_dir = ProgramSetup.Setup_Dir()
-    program_dir = 'C:/Users/Bernard/PycharmProjects/auto_timesheet'
+    print('+------------------------------+')
+    print('|        Auto Timesheet        |')
+    print('+------------------------------+')
+    print()
+    time.sleep(0.75)
 
+#---------Directory----------#
+    program_dir = Setup_Dir()
 
 #--------Class_Objects-------#
     Clock = Clock() 
@@ -257,10 +273,8 @@ if __name__ == "__main__":
     Editor = Editor()
     Style = Styler()
 
-
-#----------template----------#    
+#----------template----------#
     temp_wb = load_workbook(str(TimebookSetup.locate_template(program_dir)))
-
 
 #------------Run-------------#
     TimebookSetup.Create(program_dir)
@@ -270,7 +284,7 @@ if __name__ == "__main__":
     Editor.month_Entries()
     Style.style()
 
-
-#-----------Save-------------#    
+#-----------Save-------------#
     TimebookSetup.Save()
+
 
