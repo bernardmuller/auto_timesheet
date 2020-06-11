@@ -1,299 +1,154 @@
-import datetime
+import sys
+import itertools
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QAction, QApplication, QLabel, QMainWindow, QMenu, QStyle, QSystemTrayIcon
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import QIcon
 import os
-import os.path
-from datetime import date
+import application
 import time
-from dir import Setup_Dir
 
-from openpyxl import *
-from openpyxl.styles import *
-
-from cal import Months
+DURATION_INT = 1200
+TIME_CYCLER = itertools.cycle([1200, 20])
 
 
-class ProgramSetup:
+def secs_to_minsec(secs: int):
+    mins = secs // 60
+    secs = secs % 60
+    minsec = f'{mins:02}:{secs:02}'
+    return minsec
 
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
+class App(QtWidgets.QMainWindow):
     def __init__(self):
-        pass
-
-    def line(self):
-        time.sleep(0.5)
-        print('+------------------------------+')
-        time.sleep(0.5)
-
-    def exit(self):
-        time.sleep(0.5)
-        print()
-        print('+------------------------------+')
-        print('|       made by grizzly        |')
-        print('+------------------------------+')
-        time.sleep(0.5)
-
-
-
-class Clock:
-
-    def get_day(self):
-        today = date.today()
-        day_num = today.day
-        #month_name = Months[str(month_num)]
-        return str(day_num)
-    
-
-    def get_month(self):
-        today = date.today()
-        month_num = today.month
-        month_name = Months[str(month_num)]
-        return str(month_name)
-
-
-    def get_year(self):
-        today = date.today()
-        year_num = today.year    
-        return str(year_num)
-
-
-    def get_week_of_month(self):
-        day_of_month = datetime.datetime.now().day
-        week_number = (day_of_month - 1) // 7 + 1
-        return week_number
-
-
-
-class TimebookSetup:
-
-
-    def Save(self):
-        directory_to = 'timesheets'
-        file_name = Clock.get_year() + '_timeheets.xlsx'
-        if not os.path.isdir(directory_to):
-            os.makedirs(directory_to)
-        wb.save(os.path.join(directory_to, file_name))
-        print('File Saved')
-        ProgramSetup.exit(self)
-
-
-    ## there should always be a template file in the templates directory ##
-    def locate_template(self, directory):
-        program_dir = directory    
-        template_path = program_dir + '/templates/timesheet_template.xlsx'
-        return template_path    
-
-
-    def locate_timebook(self, directory):
-        program_dir = directory
-        file_name = Clock.get_year() + '_timeheets.xlsx'
-        file_path = program_dir + '/timesheets/' + file_name
-        return file_path    
-
-
-    def Create(self, program_dir):
-        directory_to = 'timesheets'
-        file_name = Clock.get_year() + '_timeheets.xlsx'
-        if not os.path.isdir(directory_to):
-            os.makedirs(directory_to)
-        tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name )
-        if tb_exists == True:
-            ## Prompt if file already exists , override? ##
-            print('Timebook for ' + Clock.get_year() + ' already exists')
-            prompt = input('Override? Y/N :')
-            if prompt in ['Y', 'y']:
-                prompt2 = input('Are you sure? Y/N :')
-                if prompt2 in ['Y', 'y']:
-                    temp_wb.save(os.path.join(directory_to, file_name))
-                    ProgramSetup.line(self)
-                    print('Timebook for ' + Clock.get_year() + ' created')
-                else:
-                    ProgramSetup.line(self)
-                    pass
-            else:
-                pass
-        else:
-            temp_wb.save(os.path.join(directory_to, file_name))
-            ProgramSetup.line(self)
-            print('Timebook for ' + Clock.get_year() + ' created')
-
-
-
-            
-    
-class TimesheetSetup: 
-
-    def Create(self):
-        if 'Sheet1' in wb.sheetnames:
-            self.rename_Sheet1()              
-        else: 
-            pass      
-        if Clock.get_month() in wb.sheetnames:
-            pass
-        else:     
-            print('Sheet ' + Clock.get_month() + ' added in workbook')
-            ProgramSetup.line(self)
-            wb.create_sheet(Clock.get_month())
-            self.copy_from_template()
-            self.EnterCredentials()
-
-
-    def rename_Sheet1(self):
-        sheet = wb['Sheet1']
-        sheet.title = 'Template' 
-
-
-    def copy_from_template(self):
-        temp_sheet = wb['Template']
-        active_sheet = wb[Clock.get_month()]
-        for i in range(1, 7):
-            for j in range(1, 4):
-                active_sheet.cell(row=i, column=j).value = temp_sheet.cell(row=i, column=j).value
-
-    def EnterCredentials(self):
-        active_sheet = wb[Clock.get_month()]
-        current_month = str(Clock.get_month())
-        current_year = str(Clock.get_year())
-        if active_sheet['B3'].value == 'xxx':
-            active_sheet['B3'].value = current_month + ' ' + current_year
-        if active_sheet['B4'].value == 'xxx':
-            new_user = input('Please enter your name: ')
-            active_sheet['B4'].value = new_user
-            print('Username saved.')
-            ProgramSetup.line(self)
-        else:
-            pass
-
-
-
-class Editor:
-
-    def day_Entry(self):
-
-        desc_value = input('Today\'s work description: ')
-        day_list = [(str(Clock.get_day()), desc_value, '*')] 
-        for d in day_list:                           
-            active_sheet.append(d)
-        print(f'Description for {Clock.get_day()} {Clock.get_month()} submitted.')
-        ProgramSetup.line(self)
-
-
-    def curr_week(self):
-        week = Clock.get_week_of_month()
-        curr_week = 'Week' + str(week)  
-        return str(curr_week)  
-      
-    ## following appends work descriptions to excel file
-    def month_Entries(self):      
-        current_week = self.curr_week()
-        if date.today().weekday() == 0:
-            if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
-                ProgramSetup.line(self)
-                print('Daily Entry Satisfied')
-                ProgramSetup.line(self)
-            elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
-                active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week 
-                self.day_Entry()                    
-            else:
-                if active_sheet.cell(row=active_sheet.max_row,column=1).value == current_week:                    
-                    self.day_Entry()
-                else:                    
-                    active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week           
-                    self.day_Entry()
-        elif not date.today().weekday() == 0 or 5 or 6:
-            if active_sheet.cell(row=active_sheet.max_row,column=1).value == Clock.get_day():
-                ProgramSetup.line(self)
-                print('Daily Entry Satisfied')
-                ProgramSetup.line(self)
-            elif active_sheet.cell(row=active_sheet.max_row,column=1).value == 'PROJECT':
-                active_sheet.cell(row=active_sheet.max_row+1,column=1).value = current_week
-                self.day_Entry()               
-            else:
-                self.day_Entry()
-
-
-class Styler:
-
-    def Column_sizes(self):
-        active_sheet = wb[Clock.get_month()]
-        active_sheet.column_dimensions['A'].width = 17
-        active_sheet.column_dimensions['B'].width = 48
-        active_sheet.column_dimensions['C'].width = 17
-
-
-    def Borders(self):
-        active_sheet = wb[Clock.get_month()]
-        thin = Side(border_style="thin", color="000000")
-        double = Side(border_style="double", color="000000")
-
-        for i in range(1, 4):
-            active_sheet.cell(row=6,column=i).border = Border(top=thin, left=thin, right=thin, bottom=double)
-
-        for i in range(7, active_sheet.max_row+1):
-            for j in range(1, 4):
-                active_sheet.cell(row=i,column=j).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-
-    def Headers(self):
-        active_sheet = wb[Clock.get_month()]
-        medium_font = Font(name='Calibri', bold=True, size= 16)
-        center_align = Alignment(horizontal='center')
-        right_align = Alignment(horizontal='right')
-        large_font = Font(name='Calibri', bold=True, size= 18)
-
-
-        #---Timesheet---#
-        active_sheet['A1'].value = 'TIMESHEET'
-        active_sheet['A1'].font = large_font
-
-        active_sheet['B1'].value = 'CNR'
-        active_sheet['C1'].value = '.Architects'
-        active_sheet['B1'].font = Font(name='Bauhaus 93', size=16, bold=True)
-        active_sheet['C1'].font = Font(name= 'New Times Roman', size=16, bold=False)
-        active_sheet['B1'].alignment = Alignment(horizontal='right')
-
-        active_sheet['A'].alignment = Alignment(horizontal='center')
-
-
-        for i in range(1, 4):
-            active_sheet.cell(row=6, column=i).font = medium_font
-            active_sheet.cell(row=6, column=i).alignment = center_align
-
-
-    def style(self):
-        self.Column_sizes()
-        self.Borders()
-        self.Headers()
-
-
-  
-    
-if __name__ == "__main__":
-
-    print('+------------------------------+')
-    print('|        Auto Timesheet        |')
-    print('+------------------------------+')
-    print()
-    time.sleep(0.75)
-
-#---------Directory----------#
-    program_dir = Setup_Dir()
-
-#--------Class_Objects-------#
-    Clock = Clock() 
-    TimebookSetup = TimebookSetup()
-    TimesheetSetup = TimesheetSetup()
-    Editor = Editor()
-    Style = Styler()
-
-#----------template----------#
-    temp_wb = load_workbook(str(TimebookSetup.locate_template(program_dir)))
-
-#------------Run-------------#
-    TimebookSetup.Create(program_dir)
-    wb = load_workbook(str(TimebookSetup.locate_timebook(program_dir)))    
-    TimesheetSetup.Create()
-    active_sheet = wb[Clock.get_month()]
-    Editor.month_Entries()
-    Style.style()
-
-#-----------Save-------------#
-    TimebookSetup.Save()
-    time.sleep(5)
-
-
+        super().__init__()
+        app.setStyle('Fusion')
+
+        self.current_timer = 1
+        self.time_left_int = DURATION_INT
+        self.myTimer = QtCore.QTimer(self)
+
+        # Init QSystemTrayIcon
+        self.tray_icon = QSystemTrayIcon(QIcon(iconFile))
+        self.tray_icon.show()
+
+        # Tray menu
+        show_action = QAction("Show", self)
+        quit_action = QAction("Exit", self)
+        hide_action = QAction("Hide", self)
+        show_action.triggered.connect(self.show)
+        hide_action.triggered.connect(self.hide)
+        quit_action.triggered.connect(app.quit)
+
+        tray_menu = QMenu()
+        tray_menu.addAction(show_action)
+        tray_menu.addAction(hide_action)
+        tray_menu.addAction(quit_action)
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.show()
+
+        # App window
+        self.setGeometry(300, 300, 300, 180)
+        self.setStyleSheet("background-color: #2B607A;")
+        self.setWindowTitle("Auto Timesheet")
+
+        self.Label = QtWidgets.QLabel(self)
+        self.Label.move(80,20)
+        self.Label.setAlignment(QtCore.Qt.AlignCenter)
+        self.Label.setStyleSheet("font: 18pt ; color: white")
+        self.Label.setText("Next Entry at:")
+        self.Label.adjustSize()
+
+        # Widgets
+        self.timerLabel = QtWidgets.QLabel(self)
+        self.timerLabel.move(100, 50)
+        self.timerLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.timerLabel.setStyleSheet("font: 18pt ; color: white")
+        self.timerLabel.setText("23:54")
+
+        self.startButton = QtWidgets.QPushButton(self)
+        self.startButton.setText("Enter")
+        self.startButton.move(100, 100)
+        self.startButton.clicked.connect(self.runApp)
+        self.startButton.setStyleSheet("font: 20pt")
+        self.startButton.setStyleSheet("font: 12pt ; background-color: #055076 ; color:white")
+
+        self.minimizeButton = QtWidgets.QPushButton(self)
+        self.minimizeButton.setText("Minimize")
+        self.minimizeButton.move(100, 130)
+        self.minimizeButton.clicked.connect(self.minimize)
+        self.minimizeButton.setStyleSheet("font: 12pt ; background-color: #055076 ; color:white")
+
+        #self.update_gui()
+        #self.settime()
+
+    def settime(self):
+        setTime = self.timerLabel.text()
+        Current = time.strftime("%H:%M")
+
+        while setTime != Current:
+            Current = time.strftime("%H:%M")
+            time.sleep(1)
+        if setTime == Current:
+            app.Run()
+
+    def runApp(self):
+        application.Run()
+
+    def startTimer(self):
+        self.time_left_int = next(TIME_CYCLER)
+        self.myTimer.timeout.connect(self.timerTimeout)
+        self.myTimer.start(1000)
+
+    def timerTimeout(self):
+        self.time_left_int -= 1
+        if self.time_left_int == 0:
+            if self.current_timer == 1:
+                self.tray_icon.showMessage("TwentyTwenty", "It's time! Look away from your monitor for 20 seconds",
+                                           QIcon(iconFile), 7000)
+                self.current_timer = 2
+            elif self.current_timer == 2:
+                self.tray_icon.showMessage("TwentyTwenty", "Nice! You can now continue working", QIcon(iconFile), 7000)
+                self.current_timer = 1
+            self.time_left_int = next(TIME_CYCLER)
+
+        #self.update_gui()
+
+    def update_gui(self):
+        minsec = secs_to_minsec(self.time_left_int)
+        self.timerLabel.setText(minsec)
+
+    def minimize(self):
+        self.hide()
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
+        self.tray_icon.showMessage(
+            "Auto Timesheet",
+            "Application was minimized to Tray",
+            QIcon(iconFile),
+            2000
+        )
+
+
+
+
+if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
+iconFile = resource_path('icon/icon.ico')
+app = QtWidgets.QApplication(sys.argv)
+app.setQuitOnLastWindowClosed(False)
+main_window = App()
+app.setWindowIcon(QIcon(iconFile))
+main_window.show()
+sys.exit(app.exec_())
