@@ -296,7 +296,9 @@ temp_wb = load_workbook(str(TimebookSetup.locate_template(program_dir)))
 wb = load_workbook(str(TimebookSetup.locate_timebook(program_dir)))
 active_sheet = wb[Clock.get_month()]
 
-#Run()
+
+if __name__ == '__main__':
+    Run()
 
 
 
