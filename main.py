@@ -13,10 +13,10 @@ from cal import Months
 import sys
 import os
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QAction, QApplication, QLabel, QMainWindow, QMenu, QStyle, QSystemTrayIcon, QDesktopWidget, \
-    QLineEdit, QStatusBar
+from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import *
+
 
 
 def resource_path(relative_path):
@@ -28,11 +28,23 @@ def resource_path(relative_path):
 class MainWindow(QtWidgets.QWidget):
     switch_window = QtCore.pyqtSignal()
     iconFile = resource_path('icon/CNRlogo.ico')
+    status = "working..."
 
     def __init__(self):
         global app
         QtWidgets.QWidget.__init__(self)
         app.setStyle('Fusion')
+        global ProgramSetup
+        global program_dir
+        global Clock
+        global TimebookSetup
+        global TimesheetSetup
+        global Editor
+        global Style
+        global temp_wb
+        global wb
+        global active_sheet
+
 
         # App window
         self.setGeometry(300, 300, 300, 180)
@@ -74,6 +86,14 @@ class MainWindow(QtWidgets.QWidget):
                                         "background-color : lightgrey;"
                                         "}")
 
+        self.Status = QtWidgets.QLabel(self)
+        self.Status.setGeometry(QtCore.QRect(50, 10, 200, 40))
+        self.Status.move(10, 165)
+        self.Status.setText(str(self.status))
+        self.Status.setObjectName("Promptlabel")
+        self.Status.setFont(QFont("calibri", 6))
+        self.Status.adjustSize()
+
 
         self.name = QtWidgets.QLabel(self)
         self.name.setGeometry(QtCore.QRect(50, 10, 200, 40))
@@ -89,9 +109,35 @@ class MainWindow(QtWidgets.QWidget):
         # self.statusBar().showMessage('Message in statusbar.')
 
     def submit_clicked(self):
-        self.line.setPlaceholderText("Coming soon...")
-        pass
+        current_week = self.curr_week()
+        if date.today().weekday() == 0:
+            if self.active_sheet.cell(row=self.active_sheet.max_row, column=1).value == Clock.get_day():
+                self.line.setPlaceholderText('Daily Entry Satisfied')
+            elif self.active_sheet.cell(row=self.active_sheet.max_row, column=1).value == 'PROJECT':
+                self.active_sheet.cell(row=self.active_sheet.max_row + 1, column=1).value = current_week
+                self.day_Entry()
+            else:
+                if self.active_sheet.cell(row=self.active_sheet.max_row, column=1).value == current_week:
+                    self.day_Entry()
+                else:
+                    self.active_sheet.cell(row=self.active_sheet.max_row + 1, column=1).value = current_week
+                    self.day_Entry()
+        elif not date.today().weekday() == 0 or 5 or 6:
+            if self.active_sheet.cell(row=self.active_sheet.max_row, column=1).value == Clock.get_day():
+                self.line.setPlaceholderText('Daily Entry Satisfied')
+            elif self.active_sheet.cell(row=self.active_sheet.max_row, column=1).value == 'PROJECT':
+                self.active_sheet.cell(row=active_sheet.max_row + 1, column=1).value = current_week
+                self.day_Entry()
+            else:
+                self.day_Entry()
 
+    def day_Entry(self):
+        global active_sheet
+        desc_value = self.line.text()
+        day_list = [(str(Clock.get_day()), desc_value, '*')]
+        for d in day_list:
+            self.active_sheet.append(d)
+        self.status.setText(f'Description for {Clock.get_day()} {Clock.get_month()} submitted.')
 
     def back_clicked(self):
         self.switch_window.emit()
@@ -104,35 +150,29 @@ class MainWindow(QtWidgets.QWidget):
         self.move(qr.topLeft())
 
 
-class WindowTwo(QtWidgets.QWidget):
-
-    def __init__(self, text):
-        QtWidgets.QWidget.__init__(self)
-        self.setWindowTitle('Window Two')
-
-        layout = QtWidgets.QGridLayout()
-
-        self.label = QtWidgets.QLabel(text)
-        layout.addWidget(self.label)
-
-        self.button = QtWidgets.QPushButton('Close')
-        self.button.clicked.connect(self.close)
-
-        layout.addWidget(self.button)
-
-        self.setLayout(layout)
-
-
 class Dash(QtWidgets.QWidget):
 
     switch_window = QtCore.pyqtSignal()
     iconFile = resource_path('icon/CNRlogo.ico')
+    status = "working..."
+
 
     def __init__(self):
         global app
+        global ProgramSetup
+        global program_dir
+        global Clock
+        global TimebookSetup
+        global TimesheetSetup
+        global Editor
+        global Style
+        global temp_wb
+        global wb
+        global active_sheet
         QtWidgets.QWidget.__init__(self)
         app.setStyle('Fusion')
         self.iconFile = resource_path('icon/CNRlogo.ico')
+        #self.status = "working..."
 
         # Init QSystemTrayIcon
         self.tray_icon = QSystemTrayIcon(QIcon(self.iconFile))
@@ -192,6 +232,14 @@ class Dash(QtWidgets.QWidget):
         # self.timeButton.clicked.connect(self.time_clicked)
         # self.timeButton.setFont(QFont("Calibri", 11))
 
+        self.Status = QtWidgets.QLabel(self)
+        self.Status.setGeometry(QtCore.QRect(50, 10, 200, 40))
+        self.Status.move(10, 165)
+        self.Status.setText(str(self.status))
+        self.Status.setObjectName("Promptlabel")
+        self.Status.setFont(QFont("calibri", 6))
+        self.Status.adjustSize()
+
 
         self.name = QtWidgets.QLabel(self)
         self.name.setGeometry(QtCore.QRect(50, 10, 200, 40))
@@ -207,7 +255,62 @@ class Dash(QtWidgets.QWidget):
         # self.statusBar().showMessage('Message in statusbar.')
 
     def submit_clicked(self):
+        program_dir = Setup_Dir()
+
+        directory_to = 'timesheets'
+        file_name = Clock.get_year() + '_timeheets.xlsx'
+        if not os.path.isdir(directory_to):
+            os.makedirs(directory_to)
+        tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name)
+        if tb_exists == True:
+            ## Prompt if file already exists , override? ##
+            QtWidgets.QMessageBox.question(self, "Timebook Exists",
+                                           'Timebook for ' + Clock.get_year() + ' already exists',
+                                           QtWidgets.QMessageBox.Ok)
+            prompt = QtWidgets.QMessageBox.question(self, "Timebook Exists",
+                                                        "Override existing? Previous version will be lost.",
+                                                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if prompt == QtWidgets.QMessageBox.Yes:
+                prompt2 = QtWidgets.QMessageBox.question(self, "Timebook Exists",
+                                                             "Are you sure?",
+                                                             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                if prompt2 == QtWidgets.QMessageBox.Yes:
+                    temp_wb.save(os.path.join(directory_to, file_name))
+                    QtWidgets.QMessageBox.question(self, "Timebook Created",
+                                                   'Timebook for ' + Clock.get_year() + ' created',
+                                                   QtWidgets.QMessageBox.Ok)
+                    self.Window_Switch()
+                else:
+                    self.Window_Switch()
+                    pass
+            else:
+                self.Window_Switch()
+                pass
+        else:
+            temp_wb.save(os.path.join(directory_to, file_name))
+            QtWidgets.QMessageBox.question(self, "Timebook Created",
+                                           'Timebook for ' + Clock.get_year() + ' created',
+                                           QtWidgets.QMessageBox.Ok)
+        if 'Sheet1' in wb.sheetnames:
+            TimesheetSetup.rename_Sheet1()
+        else:
+            pass
+        if Clock.get_month() in wb.sheetnames:
+            pass
+        else:
+            QtWidgets.QMessageBox.question(self, "Timesheet Created",
+                                           'Sheet ' + Clock.get_month() + ' added in workbook',
+                                           QtWidgets.QMessageBox.Ok)
+            #print('Sheet ' + Clock.get_month() + ' added in workbook')
+            self.wb.create_sheet(Clock.get_month())
+            TimesheetSetup.copy_from_template()
+        self.Window_Switch()
+
+
+    def Window_Switch(self):
+        time.sleep(0.15)
         self.switch_window.emit()
+
 
     def closeEvent(self, event):
         event.ignore()
@@ -245,9 +348,10 @@ class Controller:
         self.dash.hide()
         self.submit.show()
 
-    def show_window_two(self, text):
-        self.window_two = WindowTwo(text)
-        self.window.close()
+    def Credentials(self):
+        #self.window_two = WindowTwo()
+        self.submit.switch_window.connect(self.show_submit)
+        self.dash.hide()
         self.window_two.show()
 
 
@@ -317,8 +421,10 @@ class TimebookSetup:
                 prompt2 = input('Are you sure? Y/N :')
                 if prompt2 in ['Y', 'y']:
                     temp_wb.save(os.path.join(directory_to, file_name))
+                    ProgramSetup.line()
                     print('Timebook for ' + Clock.get_year() + ' created')
                 else:
+                    ProgramSetup.line()
                     pass
             else:
                 pass
@@ -362,7 +468,7 @@ class TimesheetSetup:
         if active_sheet['B4'].value == 'xxx':
             new_user = input('Please enter your name: ')
             active_sheet['B4'].value = new_user
-            print('Username saved.')
+            #print('Username saved.')
         else:
             pass
 
@@ -371,7 +477,7 @@ class Editor:
 
     def day_Entry(self):
 
-        desc_value = input('Today\'s work description: ')
+        desc_value = MainWindow.line.getText()
         day_list = [(str(Clock.get_day()), desc_value, '*')]
         for d in day_list:
             active_sheet.append(d)
@@ -500,3 +606,6 @@ active_sheet = wb[Clock.get_month()]
 if __name__ == '__main__':
     #Run()
     main()
+
+
+
