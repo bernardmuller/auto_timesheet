@@ -1,11 +1,9 @@
 import datetime
-import os
 import os.path
 from datetime import date, datetime
 import time
 from dir import Setup_Dir
 from threading import Timer
-
 
 from openpyxl import *
 from openpyxl.styles import *
@@ -15,9 +13,7 @@ from cal import Months
 import traceback, sys
 import os
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtGui import *
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -26,23 +22,20 @@ from PyQt5.QtCore import *
 import schedule
 
 
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
-
+# def resource_path(relative_path):
+#     """ Get absolute path to resource, works for dev and for PyInstaller """
+#     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+#     return os.path.join(base_path, relative_path)
 
 class Dash(QtWidgets.QWidget):
 
     switch_window = QtCore.pyqtSignal()
-    iconFile = resource_path('icon/CNRlogo.ico')
-    #program_dir = Setup_Dir()
-    #temp_wb = load_workbook(str(.locate_template(Dash.program_dir)))
 
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         app.setStyle('Fusion')
-        self.iconFile = resource_path('icon/CNRlogo.ico')
+        self.iconFile = 'CNRlogo.ico'
+        #self.iconFile = resource_path('icon/CNRlogo.ico')
 
         self.status = "working..."
 
@@ -84,7 +77,8 @@ class Dash(QtWidgets.QWidget):
         self.titlelabel = QtWidgets.QLabel(self)
         self.titlelabel.setGeometry(QtCore.QRect(50, 10, 200, 40))
         self.titlelabel.setText("")
-        self.titlelabel.setPixmap(QtGui.QPixmap(resource_path('icon/CNRtitle.png')))
+        self.titlelabel.setPixmap(QtGui.QPixmap('CNRtitle.png'))
+        #self.titlelabel.setPixmap(QtGui.QPixmap(resource_path('icon/CNRtitle.png')))
         self.titlelabel.setScaledContents(True)
         self.titlelabel.setObjectName("titlelabel")
 
@@ -155,7 +149,6 @@ class Dash(QtWidgets.QWidget):
             self.Status.adjustSize()
             self.wb.create_sheet(Clock.get_month(self))
             self.copy_from_template()
-            # self.EnterCredentials()
         self.Save()
 
     def rename_Sheet1(self):
@@ -202,11 +195,8 @@ class Dash(QtWidgets.QWidget):
         self.Window_Switch()
 
     def time_clicked(self):
-        #self.status = "Coming soon..."
         self.Status.setText("Coming soon...")
         self.Status.adjustSize()
-        #self.status = "working..."
-        #self.Status.setText(str(self.status))
 
     def Window_Switch(self):
         time.sleep(0.15)
@@ -268,8 +258,7 @@ class Dash(QtWidgets.QWidget):
 ###-------------------------------------------------------------------###
 class MainWindow(QtWidgets.QWidget):
     switch_window = QtCore.pyqtSignal()
-    iconFile = resource_path('icon/CNRlogo.ico')
-    status = "working..."
+    status = ""
 
     def __init__(self):
         global app
@@ -328,7 +317,6 @@ class MainWindow(QtWidgets.QWidget):
         self.Status.setFont(QFont("calibri", 6))
         self.Status.adjustSize()
 
-
         self.name = QtWidgets.QLabel(self)
         self.name.setGeometry(QtCore.QRect(50, 10, 200, 40))
         self.name.move(240, 165)
@@ -342,10 +330,6 @@ class MainWindow(QtWidgets.QWidget):
         self.Create()
         self.active_sheet = self.wb[Clock.get_month(self)]
 
-
-
-        #self.Save()
-
     def Create(self):
         if 'Sheet1' in self.wb.sheetnames:
             self.rename_Sheet1()
@@ -358,7 +342,6 @@ class MainWindow(QtWidgets.QWidget):
             self.Status.adjustSize()
             self.wb.create_sheet(Clock.get_month(self))
             self.copy_from_template()
-            #self.EnterCredentials()
 
     def rename_Sheet1(self):
         sheet = self.wb['Sheet1']
@@ -370,7 +353,6 @@ class MainWindow(QtWidgets.QWidget):
         for i in range(1, 7):
             for j in range(1, 4):
                 active_sheet.cell(row=i, column=j).value = temp_sheet.cell(row=i, column=j).value
-
 
     def day_Entry(self):
         desc_value = self.line_value()
@@ -418,7 +400,6 @@ class MainWindow(QtWidgets.QWidget):
         self.EnterCredentials()
         self.month_Entries()
         self.Save()
-        #self.line.setPlaceholderText("Coming soon...")
 
     def back_clicked(self):
         self.switch_window.emit()
@@ -522,7 +503,6 @@ class Clock:
     def get_day(self):
         today = date.today()
         day_num = today.day
-        # month_name = Months[str(month_num)]
         return str(day_num)
 
     def get_month(self):
@@ -542,8 +522,6 @@ class Clock:
         return week_number
 
 
-
-
 ##----------------------------------------------------------------------##
 class Controller:
 
@@ -551,111 +529,22 @@ class Controller:
         self.dash = Dash()
         self.submit = MainWindow()
 
-
     def show_dash(self):
-        #self.dash = Dash()
         self.dash.switch_window.connect(self.show_submit)
         self.submit.hide()
         self.dash.show()
 
     def show_submit(self):
-        #self.submit = MainWindow()
         self.submit.switch_window.connect(self.show_dash)
         self.dash.hide()
         self.submit.show()
 
-    def Credentials(self):
-        #self.window_two = WindowTwo()
-        self.submit.switch_window.connect(self.show_submit)
-        self.dash.hide()
-        self.window_two.show()
 
-
-
-###-----------------------------------------------------------------------------------------###
-# class TimebookSetup:
-#
-#     def Save(self):
-#         directory_to = 'timesheets'
-#         file_name = self.get_year() + '_timeheets.xlsx'
-#         if not os.path.isdir(directory_to):
-#             os.makedirs(directory_to)
-#         self.wb.save(os.path.join(directory_to, file_name))
-#         print('File Saved')
-#
-#     ## there should always be a template file in the templates directory ##
-#     def locate_template(self, directory):
-#         program_dir = directory
-#         template_path = program_dir + '/templates/timesheet_template.xlsx'
-#         return template_path
-#
-#     def locate_timebook(self, directory):
-#         program_dir = directory
-#         file_name = Clock.get_year() + '_timeheets.xlsx'
-#         file_path = program_dir + '/timesheets/' + file_name
-#         return file_path
-
-    # def Create(self, program_dir):
-    #     directory_to = 'timesheets'
-    #     file_name = Clock.get_year() + '_timeheets.xlsx'
-    #     if not os.path.isdir(directory_to):
-    #         os.makedirs(directory_to)
-    #     tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name)
-    #     if tb_exists == True:
-    #         ## Prompt if file already exists , override? ##
-    #         print('Timebook for ' + Clock.get_year() + ' already exists')
-    #         prompt = input('Override? Y/N :')
-    #         if prompt in ['Y', 'y']:
-    #             prompt2 = input('Are you sure? Y/N :')
-    #             if prompt2 in ['Y', 'y']:
-    #                 temp_wb.save(os.path.join(directory_to, file_name))
-    #                 ProgramSetup.line()
-    #                 print('Timebook for ' + Clock.get_year() + ' created')
-    #             else:
-    #                 ProgramSetup.line()
-    #                 pass
-    #         else:
-    #             pass
-    #     else:
-    #         temp_wb.save(os.path.join(directory_to, file_name))
-    #         print('Timebook for ' + Clock.get_year() + ' created')
-
-
-
-
-
-
-
-
-
-
-
-
-# def main():
-#     app = QtWidgets.QApplication(sys.argv)
-#     app.setQuitOnLastWindowClosed(False)
-#     controller = Controller()
-#     app.setWindowIcon(QIcon(iconFile))
-#     controller.show_dash()
-#     sys.exit(app.exec_())
-
-
-#app = QtWidgets.QApplication(sys.argv)
-iconFile = resource_path('icon/CNRlogo.ico')
-#ProgramSetup = ProgramSetup()
-# program_dir = Setup_Dir()
-# Clock = Clock()
-# TimebookSetup = TimebookSetup()
-# TimesheetSetup = TimesheetSetup()
-# Editor = Editor()
-# Style = Styler()
-# temp_wb = load_workbook(str(TimebookSetup.locate_template(program_dir)))
-# wb = load_workbook(str(TimebookSetup.locate_timebook(program_dir)))
-# active_sheet = wb[Clock.get_month()]
-
+#iconFile = resource_path('icon/CNRlogo.ico')
 
 if __name__ == '__main__':
-    iconFile = resource_path('icon/CNRlogo.ico')
+    iconFile = 'CNRlogo.ico'
+    #iconFile = resource_path('icon/CNRlogo.ico')
     app = QtWidgets.QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     controller = Controller()
