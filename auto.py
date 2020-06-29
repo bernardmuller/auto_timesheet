@@ -268,6 +268,7 @@ class MainWindow(QtWidgets.QWidget):
         self.program_dir = Setup_Dir()
         self.directory_to = 'timesheets'
         self.file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        #self.charCount = 0
 
         # App window
         self.setGeometry(300, 300, 300, 180)
@@ -355,12 +356,26 @@ class MainWindow(QtWidgets.QWidget):
                 active_sheet.cell(row=i, column=j).value = temp_sheet.cell(row=i, column=j).value
 
     def day_Entry(self):
+        n = 40
+        lineCount = 1
         desc_value = self.line_value()
-        day_list = [(str(Clock.get_day(self)), desc_value, '*')]
-        for d in day_list:
-            self.active_sheet.append(d)
+        desc_item = desc_value.split(';')
+        for idx in desc_item:
+            desc_line = [idx[i:i + n] for i in range(0, len(idx), n)]
+            for i in desc_line:
+                 if lineCount == 1:
+                     day_list = [(str(Clock.get_day(self)), i, '*')]
+                     for d in day_list:
+                         self.active_sheet.append(d)
+                     lineCount += 1
+                 else:
+                     day_list = [('', i, '*')]
+                     for d in day_list:
+                         self.active_sheet.append(d)
+                     lineCount += 1
         self.line.setText("")
         self.line.setPlaceholderText(f'Description for {Clock.get_day(self)} {Clock.get_month(self)} submitted.')
+
 
     def curr_week(self):
         week = Clock.get_week_of_month(self)
@@ -371,6 +386,9 @@ class MainWindow(QtWidgets.QWidget):
         current_week = self.curr_week()
         if date.today().weekday() == 0:
             if self.active_sheet.cell(row=self.active_sheet.max_row,column=1).value == Clock.get_day(self):
+                self.line.setText("")
+                self.line.setPlaceholderText('Daily Entry Satisfied')
+            elif self.active_sheet.cell(row=self.active_sheet.max_row, column=1).value == '':
                 self.line.setText("")
                 self.line.setPlaceholderText('Daily Entry Satisfied')
             elif self.active_sheet.cell(row=self.active_sheet.max_row,column=1).value == 'PROJECT':
@@ -429,6 +447,14 @@ class MainWindow(QtWidgets.QWidget):
         active_sheet.column_dimensions['B'].width = 48
         active_sheet.column_dimensions['C'].width = 17
 
+    # def row_sizes(self, charCount):
+    #     active_sheet = self.wb[Clock.get_month(self)]
+    #     for i in range(7, active_sheet.max_row + 1):
+    #         for j in range(2, 3):
+    #             if len(active_sheet.cell(row=6, column=i)) > 30:
+
+
+
     def Borders(self):
         active_sheet = self.wb[Clock.get_month(self)]
         thin = Side(border_style="thin", color="000000")
@@ -452,7 +478,7 @@ class MainWindow(QtWidgets.QWidget):
         active_sheet['A1'].value = 'TIMESHEET'
         active_sheet['A1'].font = large_font
 
-        active_sheet['B1'].value = 'CNR'
+        active_sheet['B1'].value = 'cnr'
         active_sheet['C1'].value = '.Architects'
         active_sheet['B1'].font = Font(name='Bauhaus 93', size=16, bold=True)
         active_sheet['C1'].font = Font(name='New Times Roman', size=16, bold=False)
