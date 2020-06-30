@@ -1,4 +1,4 @@
-#|------Auto Timesheet 1.2------|
+#|------Auto Timesheet 1.3------|
 
 
 # Requirements: 
@@ -7,7 +7,8 @@
 - Do NOT rename anything!
 
 # Set up automatic startup: 
-- Run program once and close. This allows the program to save its directory.
+- Move AutoTimesheet 1.3 folder to My Documents.
+- Run program once by double clicking "auto.exe" and close. This allows the program to save its directory.
 - Right click on "initialize.bat" and click edit.
 - Copy contents of "directory.txt" to "initialize.bat", followed by "\auto.exe". Save and close. Don't delete 'START' in the .bat file	
 - Press Win + R.
@@ -31,7 +32,6 @@
 # Future features: 
 - The ability to set a custom scheduled time for daily submission.
 - The ability for the program to email you your current month's timesheet at the end of each month. This is a bit tricky for security reasons.
-- A "Review" button that opens excel file.
 
 # Known bugs: 
 - Program won't create a timebook on its own like in prototype version. To avoid this, always have a 
@@ -40,8 +40,6 @@
   
 	- Note: If your file were to be corrupted or lost. Copy the template file from "/templates"
 	        and rename it.
-
-- CNR Letterhead needs to be updated.
 
 #
 Thank you for using AutoTimeheet! If you find any new bugs,or have any suggestions to improve the program PLSSS let me know!       pls...

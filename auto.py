@@ -42,7 +42,7 @@ class Dash(QtWidgets.QWidget):
         self.time_selected = 0
         self.program_dir = Setup_Dir()
         self.directory_to = 'timesheets'
-        self.file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        self.file_name = Clock.get_year(self) + '_timebook.xlsx'
 
         self.threadpool = QThreadPool()
         #print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
@@ -105,9 +105,9 @@ class Dash(QtWidgets.QWidget):
                                         "}")
 
         self.timeButton = QtWidgets.QPushButton(self)
-        self.timeButton.setText("Set Time")
+        self.timeButton.setText("Review")
         self.timeButton.move(107, 130)
-        self.timeButton.clicked.connect(self.time_clicked)
+        self.timeButton.clicked.connect(self.review_clicked)
         self.timeButton.setFont(QFont("Calibri", 11))
 
         self.Status = QtWidgets.QLabel(self)
@@ -164,7 +164,7 @@ class Dash(QtWidgets.QWidget):
 
     def check_timebook(self, program_dir):
         directory_to = 'timesheets'
-        file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        file_name = Clock.get_year(self) + '_timebook.xlsx'
         if not os.path.isdir(directory_to):
             os.makedirs(directory_to)
         tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name)
@@ -186,16 +186,17 @@ class Dash(QtWidgets.QWidget):
 
     def locate_timebook(self, directory):
         program_dir = directory
-        file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        file_name = Clock.get_year(self) + '_timebook.xlsx'
         file_path = program_dir + '/timesheets/' + file_name
         return file_path
 
     def submit_clicked(self):
-
         self.Window_Switch()
 
-    def time_clicked(self):
-        self.Status.setText("Coming soon...")
+    def review_clicked(self):
+        filePath = self.locate_timebook(self.program_dir)
+        os.system(f'start "excel" {filePath}')
+        self.Status.setText("Opening Timebook...")
         self.Status.adjustSize()
 
     def Window_Switch(self):
@@ -227,7 +228,7 @@ class Dash(QtWidgets.QWidget):
         hour = 16
         minute = 00
         x = datetime.today()
-        y = x.replace(day=x.day + 1, hour=hour, minute=minute, second=0, microsecond=0)
+        y = x.replace(day=x.day, hour=hour, minute=minute, second=0, microsecond=0)
         delta_t = y - x
 
         secs = delta_t.seconds + 1
@@ -247,7 +248,7 @@ class Dash(QtWidgets.QWidget):
     def Save(self):
         self.style()
         directory_to = 'timesheets'
-        file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        file_name = Clock.get_year(self) + '_timebook.xlsx'
         if not os.path.isdir(directory_to):
             os.makedirs(directory_to)
         self.wb.save(os.path.join(directory_to, file_name))
@@ -267,7 +268,7 @@ class MainWindow(QtWidgets.QWidget):
 
         self.program_dir = Setup_Dir()
         self.directory_to = 'timesheets'
-        self.file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        self.file_name = Clock.get_year(self) + '_timebook.xlsx'
         #self.charCount = 0
 
         # App window
@@ -436,7 +437,7 @@ class MainWindow(QtWidgets.QWidget):
 
     def locate_timebook(self, directory):
         program_dir = directory
-        file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        file_name = Clock.get_year(self) + '_timebook.xlsx'
         file_path = program_dir + '/timesheets/' + file_name
         return file_path
 
@@ -517,7 +518,7 @@ class MainWindow(QtWidgets.QWidget):
     def Save(self):
         self.style()
         directory_to = 'timesheets'
-        file_name = Clock.get_year(self) + '_timeheets.xlsx'
+        file_name = Clock.get_year(self) + '_timebook.xlsx'
         if not os.path.isdir(directory_to):
             os.makedirs(directory_to)
         self.wb.save(os.path.join(directory_to, file_name))
