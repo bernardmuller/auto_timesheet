@@ -1,5 +1,7 @@
-#|------Auto Timesheet 1.3------|
+#|------Auto Timesheet 1.4------|
 
+# New Features:
+- Resolution scalability
 
 # Requirements: 
 - Always have the "timesheet_template.xlsx" file in the templates folder.
