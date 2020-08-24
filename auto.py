@@ -21,6 +21,7 @@ from PyQt5.QtCore import *
 
 import schedule
 
+#os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 # def resource_path(relative_path):
 #     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -572,7 +573,9 @@ class Controller:
 if __name__ == '__main__':
     iconFile = 'CNRlogo.ico'
     #iconFile = resource_path('icon/CNRlogo.ico')
-    app = QtWidgets.QApplication(sys.argv)
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+    app = QtWidgets.QApplication(sys.argv)    
+    app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app.setQuitOnLastWindowClosed(False)
     controller = Controller()
     app.setWindowIcon(QIcon(iconFile))

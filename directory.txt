@@ -1,1 +1,1 @@
-C:\Users\Bernard\PycharmProjects\auto_timesheet
+C:\Users\Bernard\github\auto_timesheet\auto_timesheet
