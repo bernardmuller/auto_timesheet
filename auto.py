@@ -333,6 +333,9 @@ class MainWindow(QtWidgets.QWidget):
         self.Create()
         self.active_sheet = self.wb[Clock.get_month(self)]
 
+
+
+
     def Create(self):
         if 'Sheet1' in self.wb.sheetnames:
             self.rename_Sheet1()
@@ -560,11 +563,23 @@ class Controller:
     def show_dash(self):
         self.dash.switch_window.connect(self.show_submit)
         self.submit.hide()
+        self.dash.center()
         self.dash.show()
 
     def show_submit(self):
         self.submit.switch_window.connect(self.show_dash)
         self.dash.hide()
+        self.submit.center()
+
+        if self.submit.line.text() != f'Description for {Clock.get_day(self)} {Clock.get_month(self)} submitted.':
+            self.submit.line.setPlaceholderText('')
+
+        # if self.submit.line.text() == "Daily Entry Satisfied":
+        #     self.submit.line.setPlaceholderText('')
+
+        if self.submit.Status.text() == "File Saved":
+            self.submit.Status.setText("")
+
         self.submit.show()
 
 
