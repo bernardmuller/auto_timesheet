@@ -574,9 +574,6 @@ class Controller:
         if self.submit.line.text() != f'Description for {Clock.get_day(self)} {Clock.get_month(self)} submitted.':
             self.submit.line.setPlaceholderText('')
 
-        # if self.submit.line.text() == "Daily Entry Satisfied":
-        #     self.submit.line.setPlaceholderText('')
-
         if self.submit.Status.text() == "File Saved":
             self.submit.Status.setText("")
 
