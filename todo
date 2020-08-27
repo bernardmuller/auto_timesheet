@@ -1,0 +1,11 @@
+# - script to store name, email, directory to json
+#    - adjust auto to read from this json file.
+
+- automate the installation process
+    - automate initialize.bat file creation.
+
+- email notification with timesheet attached.
+
+- automate getting credentials from google sheets api
+    - use credentials-sheets.json file to upload file to drive.
+

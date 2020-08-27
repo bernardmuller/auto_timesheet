@@ -19,6 +19,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+import user_data
+
 import schedule
 
 #os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
@@ -333,7 +335,11 @@ class MainWindow(QtWidgets.QWidget):
         self.Create()
         self.active_sheet = self.wb[Clock.get_month(self)]
 
-
+        data_file = "data.json"
+        if not os.path.exists(data_file):
+            name = self.getText()
+            email = self.getText2()
+            user_data.get_user_data(name, email)
 
 
     def Create(self):
@@ -499,7 +505,12 @@ class MainWindow(QtWidgets.QWidget):
         self.Headers()
 
     def getText(self):
-        text, okPressed = QInputDialog.getText(self, "Enter Name", "Please enter your name:", QLineEdit.Normal, "")
+        text, okPressed = QInputDialog.getText(self, "Enter Name", "Please enter your name and surname:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
+    def getText2(self):
+        text, okPressed = QInputDialog.getText(self, "Enter email", "Please enter your email address:", QLineEdit.Normal, "")
         if okPressed and text != '':
             return text
 
@@ -512,8 +523,9 @@ class MainWindow(QtWidgets.QWidget):
             active_sheet['B3'].value = current_month + ' ' + current_year
             self.Save()
         if active_sheet['B4'].value == 'xxx':
-            new_user = self.getText()
-            active_sheet['B4'].value = new_user
+            user = user_data.extract_data()
+            new_user = user['user']
+            active_sheet['B4'].value = new_user['name']
             self.Save()
         else:
             pass
@@ -564,6 +576,7 @@ class Controller:
         self.dash.switch_window.connect(self.show_submit)
         self.submit.hide()
         self.dash.center()
+        self.dash.Status.setText('')
         self.dash.show()
 
     def show_submit(self):
