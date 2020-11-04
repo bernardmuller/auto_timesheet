@@ -35,6 +35,7 @@ class Dash(QtWidgets.QWidget):
     switch_window = QtCore.pyqtSignal()
 
     def __init__(self):
+
         QtWidgets.QWidget.__init__(self)
         app.setStyle('Fusion')
         self.iconFile = 'CNRlogo.ico'
@@ -269,6 +270,12 @@ class MainWindow(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         app.setStyle('Fusion')
 
+        data_file = "data.json"
+        if not os.path.exists(data_file):
+            name = self.getText()
+            email = self.getText2()
+            user_data.get_user_data(name, email)
+
         self.program_dir = Setup_Dir()
         self.directory_to = 'timesheets'
         self.file_name = Clock.get_year(self) + '_timebook.xlsx'
@@ -334,13 +341,6 @@ class MainWindow(QtWidgets.QWidget):
         self.wb = load_workbook(str(self.locate_timebook(self.program_dir)))
         self.Create()
         self.active_sheet = self.wb[Clock.get_month(self)]
-
-        data_file = "data.json"
-        if not os.path.exists(data_file):
-            name = self.getText()
-            email = self.getText2()
-            user_data.get_user_data(name, email)
-
 
     def Create(self):
         if 'Sheet1' in self.wb.sheetnames:
