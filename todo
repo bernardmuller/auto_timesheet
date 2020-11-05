@@ -6,6 +6,4 @@
 
 - email notification with timesheet attached.
 
-- automate getting credentials from google sheets api
-    - use credentials-sheets.json file to upload file to drive.
 
