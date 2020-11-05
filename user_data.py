@@ -20,10 +20,13 @@ def get_dir():
 
 def Setup_Dir():
     prog_dir = get_dir()
-    with open(data_file, 'a')as f:
-        directory = {'directory': prog_dir}
-        feeds.append(directory)
-        json.dump(feeds, f)
+    with open(data_file, 'r+')as f:
+        data = json.load(f)
+        print(data)
+        data.update({'directory': prog_dir})
+        print(data)
+        f.seek(0)
+        json.dump(data, f)
 
 
 

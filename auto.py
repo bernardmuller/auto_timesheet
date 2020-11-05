@@ -2,7 +2,7 @@ import datetime
 import os.path
 from datetime import date, datetime
 import time
-from dir import Setup_Dir
+#from dir import Setup_Dir
 from threading import Timer
 
 from openpyxl import *
@@ -44,7 +44,9 @@ class Dash(QtWidgets.QWidget):
         self.status = "working..."
 
         self.time_selected = 0
-        self.program_dir = Setup_Dir()
+        user = user_data.extract_data()
+        directory = user['directory']
+        self.program_dir = directory
         self.directory_to = 'timesheets'
         self.file_name = Clock.get_year(self) + '_timebook.xlsx'
 
@@ -276,7 +278,9 @@ class MainWindow(QtWidgets.QWidget):
             email = self.getText2()
             user_data.get_user_data(name, email)
 
-        self.program_dir = Setup_Dir()
+        user = user_data.extract_data()
+        directory = user['directory']
+        self.program_dir = directory
         self.directory_to = 'timesheets'
         self.file_name = Clock.get_year(self) + '_timebook.xlsx'
         #self.charCount = 0
