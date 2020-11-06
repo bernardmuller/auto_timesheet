@@ -74,7 +74,7 @@ EMAIL_PASSWORD = "AT1234!@#"
 subject = f"{get_prev_month()}{get_year()} Timesheet"
 body = f"Hi {username}," \
        f"\n" \
-       f"\nPlease find attached your timebook updated to {get_prev_month()} {get_year()}.""\n This email serves the purpose as a notification and backup for your monthly timesheet." \
+       f"\nPlease find attached your timebook updated to {get_prev_month()} {get_year()}.""\nThis email serves the purpose as a notification and backup for your monthly timesheet." \
        f"\n" \
        f"\nRegards" \
        f"\nAuto Timesheet Bot"
