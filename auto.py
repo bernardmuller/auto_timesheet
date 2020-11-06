@@ -2,26 +2,22 @@ import datetime
 import os.path
 from datetime import date, datetime
 import time
-#from dir import Setup_Dir
 from threading import Timer
-
 from openpyxl import *
 from openpyxl.styles import *
-
 from cal import Months
-
-import traceback, sys
+import sys
 import os
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
-
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-
 import user_data
+import initializer
+import mail
 
-import schedule
+
 
 #os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
@@ -42,6 +38,17 @@ class Dash(QtWidgets.QWidget):
         #self.iconFile = resource_path('icon/CNRlogo.ico')
 
         self.status = "working..."
+
+        data_file = "data.json"
+        if not os.path.exists(data_file):
+            name = self.getText()
+            email = self.getText2()
+            user_data.get_user_data(name, email)
+
+        initializer.initialize()
+
+        if Clock.get_day() == 1:
+
 
         self.time_selected = 0
         user = user_data.extract_data()
@@ -230,6 +237,16 @@ class Dash(QtWidgets.QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    def getText(self):
+        text, okPressed = QInputDialog.getText(self, "Enter Name", "Please enter your name and surname:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
+    def getText2(self):
+        text, okPressed = QInputDialog.getText(self, "Enter email", "Please enter your email address:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
     def timer(self):
         hour = 16
         minute = 00
@@ -392,6 +409,7 @@ class MainWindow(QtWidgets.QWidget):
         self.line.setPlaceholderText(f'Description for {Clock.get_day(self)} {Clock.get_month(self)} submitted.')
 
 
+
     def curr_week(self):
         week = Clock.get_week_of_month(self)
         curr_week = 'Week' + str(week)
@@ -430,9 +448,10 @@ class MainWindow(QtWidgets.QWidget):
         return self.line.text()
 
     def submit_clicked(self):
-        self.EnterCredentials()
         self.month_Entries()
         self.Save()
+
+
 
     def back_clicked(self):
         self.switch_window.emit()
