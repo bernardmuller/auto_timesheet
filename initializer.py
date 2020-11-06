@@ -1,5 +1,4 @@
 import user_data
-import os
 import os.path
 import os, winshell
 from win32com.client import Dispatch
@@ -37,4 +36,3 @@ def shortcut():
     shortcut.save()
 
 initialize()
-#startup_dir()

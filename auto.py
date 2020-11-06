@@ -14,7 +14,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import user_data
-import initializer
+
 import mail
 
 
@@ -45,9 +45,11 @@ class Dash(QtWidgets.QWidget):
             email = self.getText2()
             user_data.get_user_data(name, email)
 
+        import initializer
         initializer.initialize()
 
-        if Clock.get_day() == 1:
+        if Clock.get_day(self) == 6:
+            mail.send_mail()
 
 
         self.time_selected = 0
@@ -96,9 +98,9 @@ class Dash(QtWidgets.QWidget):
         self.titlelabel.setObjectName("titlelabel")
 
         self.Label = QtWidgets.QLabel(self)
-        self.Label.setText("Next Submission at: 16:00")
+        self.Label.setText("Submission @ 16:00")
         self.Label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Label.move(70, 60)
+        self.Label.move(85, 60)
         self.Label.setFont(QFont("calibri", 11))
         self.Label.adjustSize()
 
