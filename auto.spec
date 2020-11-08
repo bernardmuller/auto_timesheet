@@ -6,7 +6,7 @@ block_cipher = None
 a = Analysis(['auto.py'],
              pathex=['C:\\Users\\Bernard\\PycharmProjects\\auto_timesheet'],
              binaries=[],
-             datas=[('CNRlogo.ico', 'ico'),('CNRtitle.png', 'png')],
+             datas=[('atlogo.ico', 'ico'),('CNRtitle.png', 'png')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -30,4 +30,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False , icon='CNRlogo.ico')
+          console=False , icon='atlogo.ico')

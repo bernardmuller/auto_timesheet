@@ -1,22 +1,19 @@
-#|------Auto Timesheet 1.4------|
+#|------Auto Timesheet 2.0------|
 
 # New Features:
-- Resolution scalability
+- Startup initializer automated
+- Autotime bot intigration
+    - bot will email you the latest updated timebook on the 1st of each month. This is for backup purposes.
+- User data stored in json file. No need to enter you name again other than the first time you run the program.
 
 # Requirements: 
 - Always have the "timesheet_template.xlsx" file in the templates folder.
-- Keep "AutoTimesheet.exe" in it's directory.
+- Keep "auto.exe" in it's directory.
 - Do NOT rename anything!
 
-# Set up automatic startup: 
-- Move AutoTimesheet 1.3 folder to My Documents.
-- Run program once by double clicking "auto.exe" and close. This allows the program to save its directory.
-- Right click on "initialize.bat" and click edit.
-- Copy contents of "directory.txt" to "initialize.bat", followed by "\auto.exe". Save and close. Don't delete 'START' in the .bat file	
-- Press Win + R.
-- Type "shell:startup", click 'Ok'.
-- Create a shortcut of "initialize.bat" file and copy it into the startup folder.
-- Restart computer.			
+# Set up:
+- Move AutoTimesheet 2.0 folder to My Documents.
+- Run auto.exe and enter name and surname along with email if you intend to use the autotime mailbot.(optional) 			
 
 # How it works: 
 - The program creates a excel file that accumulates all your timesheets in one Timebook.
@@ -32,8 +29,8 @@
 		your timesheet for any words that are being cut off, before sending it to Pam.
 
 # Future features: 
-- The ability to set a custom scheduled time for daily submission.
-- The ability for the program to email you your current month's timesheet at the end of each month. This is a bit tricky for security reasons.
+- For now I will terminate work on Autotimesheet as I do not think it needs to be any more complicated.
+- But I will still fix bugs when I find them and give users the latest version.
 
 # Known bugs: 
 - Program won't create a timebook on its own like in prototype version. To avoid this, always have a 

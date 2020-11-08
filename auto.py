@@ -15,8 +15,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import user_data
 
-import mail
-
 
 class Dash(QtWidgets.QWidget):
 
@@ -26,10 +24,9 @@ class Dash(QtWidgets.QWidget):
 
         QtWidgets.QWidget.__init__(self)
         app.setStyle('Fusion')
-        self.iconFile = 'CNRlogo.ico'
-        #self.iconFile = resource_path('icon/CNRlogo.ico')
+        self.iconFile = 'atlogo.ico'
 
-        self.status = "working..."
+        self.status = " "
 
         data_file = "data.json"
         if not os.path.exists(data_file):
@@ -40,7 +37,8 @@ class Dash(QtWidgets.QWidget):
         import initializer
         initializer.initialize()
 
-        if Clock.get_day(self) == 6:
+        import mail
+        if Clock.get_day(self) == 7:
             mail.send_mail()
 
 
@@ -52,7 +50,6 @@ class Dash(QtWidgets.QWidget):
         self.file_name = Clock.get_year(self) + '_timebook.xlsx'
 
         self.threadpool = QThreadPool()
-        #print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
 
         # Init QSystemTrayIcon
         self.tray_icon = QSystemTrayIcon(QIcon(self.iconFile))
@@ -85,7 +82,6 @@ class Dash(QtWidgets.QWidget):
         self.titlelabel.setGeometry(QtCore.QRect(50, 10, 200, 40))
         self.titlelabel.setText("")
         self.titlelabel.setPixmap(QtGui.QPixmap('CNRtitle.png'))
-        #self.titlelabel.setPixmap(QtGui.QPixmap(resource_path('icon/CNRtitle.png')))
         self.titlelabel.setScaledContents(True)
         self.titlelabel.setObjectName("titlelabel")
 
@@ -96,10 +92,6 @@ class Dash(QtWidgets.QWidget):
         self.Label.setFont(QFont("calibri", 11))
         self.Label.adjustSize()
 
-        # self.timer = QTimer()
-        # self.timer.setInterval(1000)
-        # self.timer.timeout.connect(self.recurring_timer)
-        # self.timer.start()
 
         self.submitButton = QtWidgets.QPushButton(self)
         self.submitButton.setText("Submit Now")
@@ -205,6 +197,7 @@ class Dash(QtWidgets.QWidget):
         os.system(f'start "excel" {filePath}')
         self.Status.setText("Opening Timebook...")
         self.Status.adjustSize()
+        self.Status.setText(" ")
 
     def Window_Switch(self):
         time.sleep(0.15)
@@ -441,14 +434,15 @@ class MainWindow(QtWidgets.QWidget):
     def line_value(self):
         return self.line.text()
 
+
     def submit_clicked(self):
         self.month_Entries()
         self.Save()
 
 
-
     def back_clicked(self):
         self.switch_window.emit()
+
 
     def center(self):
         qr = self.frameGeometry()
@@ -474,12 +468,6 @@ class MainWindow(QtWidgets.QWidget):
         active_sheet.column_dimensions['A'].width = 17
         active_sheet.column_dimensions['B'].width = 48
         active_sheet.column_dimensions['C'].width = 17
-
-    # def row_sizes(self, charCount):
-    #     active_sheet = self.wb[Clock.get_month(self)]
-    #     for i in range(7, active_sheet.max_row + 1):
-    #         for j in range(2, 3):
-    #             if len(active_sheet.cell(row=6, column=i)) > 30:
 
 
 
@@ -610,11 +598,8 @@ class Controller:
         self.submit.show()
 
 
-#iconFile = resource_path('icon/CNRlogo.ico')
-
 if __name__ == '__main__':
-    iconFile = 'CNRlogo.ico'
-    #iconFile = resource_path('icon/CNRlogo.ico')
+    iconFile = 'atlogo.ico'
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     app = QtWidgets.QApplication(sys.argv)    
     app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
