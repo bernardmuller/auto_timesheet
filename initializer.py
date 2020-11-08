@@ -35,4 +35,5 @@ def shortcut():
     shortcut.IconLocation = icon
     shortcut.save()
 
-initialize()
+#initialize()
+startup_dir()

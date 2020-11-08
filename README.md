@@ -1,10 +1,21 @@
-#|------Auto Timesheet 2.0------|
+#Auto Timesheet 2.0
 
-# New Features:
-- Startup initializer automated
-- Autotime bot intigration
-    - bot will email you the latest updated timebook on the 1st of each month. This is for backup purposes.
-- User data stored in json file. No need to enter you name again other than the first time you run the program.
+# Description:
+- "Auto Timesheet" is a automation program that helps the employee with the submission and tracking of said employee's timesheet.
+    A document that is submitted to admin at the end of each month containing descriptions of work the employee has worked on everyday.
+
+# How it works: 
+- The program creates a excel file that accumulates all timesheets in a Timebook of each year.
+- It automatically launches on Windows Startup.
+- On the initial launch of the program it stores user data that will be user to help fill in the timesheets and writing of monthly emails.
+- At 16h00 everyday, a popup window will appear to submit that day's work description.
+	- IMPORTANT NOTE: For those that like to enter more detailed descriptions, I have added the ability to submit multi-line
+			  descriptions. Simply add a semicolon ";" after every line.
+			  			  
+			  e.g. "Bed Beach Villa sections ;Main Lodge pool details"
+- Each line with more that 40 characters including symbols and spaces will automatically be split and appended.
+- Use the 'Review' button to open the excel sheet .
+- You can Find your timesheets in 'Documents\Timesheets\'
 
 # Requirements: 
 - Always have the "timesheet_template.xlsx" file in the templates folder.
@@ -12,36 +23,29 @@
 - Do NOT rename anything!
 
 # Set up:
-- Move AutoTimesheet 2.0 folder to My Documents.
-- Run auto.exe and enter name and surname along with email if you intend to use the autotime mailbot.(optional) 			
+- Move AutoTimesheet 2.0 folder to Program Files.
+- Run auto.exe and enter name and surname along with email if you intend to use the autotime mailbot.(optional) 	
 
-# How it works: 
-- The program creates a excel file that accumulates all your timesheets in one Timebook.
-- The program always runs in the background and at a specific time each day you will receive a popup to notify you of your daily submission,
-  the program will open up on the Submission window where you can fill in your daily work description
-
-	- IMPORTANT NOTE: For those that like to enter more detailed descriptions, I have added the ability to submit multi-line
-			  descriptions. Simply add a semicolon ";" after every line.
-			  
-			  e.g. "Bed Beach Villa sections ;Main Lodge pool details ;Made Bernard some Coffee cause he cool guy! ;)"
-	
-	- Also: Each line with more that 40 characters including symbols and spaces will automatically be split and appended. So please review 
-		your timesheet for any words that are being cut off, before sending it to Pam.
+# Newest Features:
+- Startup initializer automated
+- Autotime bot intigration
+    - bot will email you the latest updated timebook on the 1st of each month. This is for backup purposes.
+- User data stored in json file. No need to enter you name again other than the first time you run the program.
+- Timesheets saves to Documents.
+- Auto Timesheet Logo.
 
 # Future features: 
-- For now I will terminate work on Autotimesheet as I do not think it needs to be any more complicated.
-- But I will still fix bugs when I find them and give users the latest version.
+- For now I will terminate work on Auto Timesheet, but I will still fix found bugs and provide users the latest version.
 
 # Known bugs: 
-- Program won't create a timebook on its own like in prototype version. To avoid this, always have a 
-  .xlsx file in the timesheets directory with the name correlating to the current year. For example:
-  "2020_timesheets.xlsx". 
+- Sometimes App wont terminate on Exit.
   
-	- Note: If your file were to be corrupted or lost. Copy the template file from "/templates"
-	        and rename it.
+# Note:
+In the even of a lost or corrupted file: Copy the template file from "/templates"
+    and rename it, if you want to start from scratch, or check your latest email from Timesheet Bot.
+ If you find any new bugs,or have any suggestions to improve the program please notify me.
 
 #
-Thank you for using AutoTimeheet! If you find any new bugs,or have any suggestions to improve the program PLSSS let me know!       pls...
-
-
-#|-------made by grizzly--------|
+Thank you for using Auto Timeheet!
+# 
+made by grizzly

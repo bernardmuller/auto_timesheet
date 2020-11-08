@@ -125,7 +125,7 @@ class Dash(QtWidgets.QWidget):
         self.name.setFont(QFont("calibri", 6))
         self.name.adjustSize()
 
-        self.wb = load_workbook(str(self.locate_timebook(self.program_dir)))
+        self.wb = load_workbook(str(self.locate_timebook(self.documents_dir() + '\\Timesheets\\')))
 
         self.Create()
 
@@ -162,16 +162,16 @@ class Dash(QtWidgets.QWidget):
                 active_sheet.cell(row=i, column=j).value = temp_sheet.cell(row=i, column=j).value
 
     def check_timebook(self, program_dir):
-        directory_to = 'timesheets'
+        doc_dir = self.documents_dir()
         file_name = Clock.get_year(self) + '_timebook.xlsx'
-        if not os.path.isdir(directory_to):
-            os.makedirs(directory_to)
-        tb_exists = os.path.exists(program_dir + '/timesheets/' + file_name)
-        if tb_exists == True:
+        if not os.path.isdir(doc_dir + '\\Timesheets\\'):
+            os.makedirs(doc_dir + '\\Timesheets\\')
+        tb_exists = os.path.exists(doc_dir + '\\Timesheets\\' + file_name)
+        if tb_exists:
             self.Status.setText("Timebook Exists")
             self.Status.adjustSize()
         else:
-            self.temp_wb.save(os.path.join(directory_to, file_name))
+            self.temp_wb.save(os.path.join(doc_dir + '\\Timesheets\\', file_name))
             QtWidgets.QMessageBox.question(self, "Timebook Created",
                                            'Timebook for ' + Clock.get_year(self) + ' created',
                                            QtWidgets.QMessageBox.Ok)
@@ -184,16 +184,16 @@ class Dash(QtWidgets.QWidget):
         return template_path
 
     def locate_timebook(self, directory):
-        program_dir = directory
+        doc_dir = directory
         file_name = Clock.get_year(self) + '_timebook.xlsx'
-        file_path = program_dir + '/timesheets/' + file_name
+        file_path = doc_dir + file_name
         return file_path
 
     def submit_clicked(self):
         self.Window_Switch()
 
     def review_clicked(self):
-        filePath = self.locate_timebook(self.program_dir)
+        filePath = self.locate_timebook(self.documents_dir() + '\\Timesheets\\')
         os.system(f'start "excel" {filePath}')
         self.Status.setText("Opening Timebook...")
         self.Status.adjustSize()
@@ -257,13 +257,26 @@ class Dash(QtWidgets.QWidget):
 
     def Save(self):
         self.style()
-        directory_to = 'timesheets'
+        directory_to = self.documents_dir() + "\\Timesheets\\"
         file_name = Clock.get_year(self) + '_timebook.xlsx'
         if not os.path.isdir(directory_to):
             os.makedirs(directory_to)
         self.wb.save(os.path.join(directory_to, file_name))
         self.Status.setText('File Saved')
         self.Status.adjustSize()
+
+
+    def get_cwd(self):
+        cwd = os.getcwd()
+        return cwd
+
+
+    def documents_dir(self):
+        cwd = self.get_cwd()
+        string = cwd.split("\\")
+        doc_dir = str(string[0] + "\\" + string[1] + "\\" + string[
+            2] + "\\Documents")
+        return doc_dir
 
 
 ###-------------------------------------------------------------------###
@@ -346,7 +359,7 @@ class MainWindow(QtWidgets.QWidget):
         self.name.adjustSize()
 
         self.temp_wb = load_workbook(str(self.locate_template(self.program_dir)))
-        self.wb = load_workbook(str(self.locate_timebook(self.program_dir)))
+        self.wb = load_workbook(str(self.locate_timebook(self.documents_dir() + '\\Timesheets\\')))
         self.Create()
         self.active_sheet = self.wb[Clock.get_month(self)]
 
@@ -455,11 +468,10 @@ class MainWindow(QtWidgets.QWidget):
         template_path = program_dir + '/templates/timesheet_template.xlsx'
         return template_path
 
-
     def locate_timebook(self, directory):
-        program_dir = directory
+        doc_dir = directory
         file_name = Clock.get_year(self) + '_timebook.xlsx'
-        file_path = program_dir + '/timesheets/' + file_name
+        file_path = doc_dir + file_name
         return file_path
 
 
@@ -538,13 +550,25 @@ class MainWindow(QtWidgets.QWidget):
 
     def Save(self):
         self.style()
-        directory_to = 'timesheets'
+        directory_to = self.documents_dir() + "\\Timesheets\\"
         file_name = Clock.get_year(self) + '_timebook.xlsx'
         if not os.path.isdir(directory_to):
             os.makedirs(directory_to)
         self.wb.save(os.path.join(directory_to, file_name))
         self.Status.setText('File Saved')
         self.Status.adjustSize()
+
+    def get_cwd(self):
+        cwd = os.getcwd()
+        return cwd
+
+
+    def documents_dir(self):
+        cwd = self.get_cwd()
+        string = cwd.split("\\")
+        doc_dir = str(string[0] + "\\" + string[1] + "\\" + string[
+            2] + "\\Documents")
+        return doc_dir
 
 
 class Clock:

@@ -1,6 +1,7 @@
 import json
 import os
 
+
 data_file = "data.json"
 def get_user_data(name, email):
     user = {}
